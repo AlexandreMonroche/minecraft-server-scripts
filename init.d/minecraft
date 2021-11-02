@@ -1,0 +1,41 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          minecraft
+# Required-Start:    $remote_fs $syslog $network
+# Required-Stop:     $remote_fs $syslog $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Minecraft server
+# Description:       Service for starting, stopping and restarting a Minecraft server.
+### END INIT INFO
+#/etc/init.d/minecraft
+
+# Variables
+ScriptsPath="/home/minecraft/scripts"    # Location of scripts files
+
+# Run as specified user
+as_user() {
+  if [ $(whoami) = "minecraft" ]; then
+    bash -c "$1"
+  else
+    sudo -u minecraft /bin/bash -c "$1" || exit 1
+  fi
+}
+
+case "$1" in
+  start)
+    as_user $ScriptsPath/start.sh
+  ;;
+  stop)
+    as_user $ScriptsPath/stop.sh
+  ;;
+  restart)
+    as_user $ScriptsPath/restart.sh
+  ;;
+# Catch all
+  help|*)
+    printf "%s\n" "Usage: service $name {start|stop|restart|help}" >&2
+    exit 3
+  ;;
+esac
+exit 0
